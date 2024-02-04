@@ -1,19 +1,21 @@
 import esphome.codegen as cg
 import esphome.config_validation as cv
-from esphome.components import sensor, uart
+from esphome.components import sensor, uart, switch
 from esphome.const import CONF_ID
 
 DEPENDENCIES = ['uart']
 
-AUTO_LOAD = ['sensor']
+AUTO_LOAD = ['sensor', 'switch']
 
 mspawifi_ns = cg.esphome_ns.namespace('mspawifi')
 
 MSPAWifi = mspawifi_ns.class_('MSPAWifi', cg.Component)
+MSPAWifiHeaterSwitch = mspawifi_ns.class_('MSPAWifiHeaterSwitch', switch.Switch, cg.Component)
 
 CONF_REMOTE_UART = "remote_uart"
 CONF_POOL_UART = "pool_uart"
 CONF_ACTTEMP = "act_temp"
+CONF_HEATER_SWITCH = "heater_sw"
 
 CONFIG_SCHEMA = cv.COMPONENT_SCHEMA.extend({
     cv.GenerateID(): cv.declare_id(MSPAWifi),
@@ -22,6 +24,7 @@ CONFIG_SCHEMA = cv.COMPONENT_SCHEMA.extend({
     cv.Optional(CONF_ACTTEMP): sensor.sensor_schema(
         accuracy_decimals = 1
     ),
+    cv.Optional(CONF_HEATER_SWITCH): switch.SWITCH_SCHEMA.extend({cv.GenerateID(): cv.declare_id(MSPAWifiHeaterSwitch)}),
 })
 
 
@@ -38,4 +41,7 @@ async def to_code(config):
     if CONF_ACTTEMP in config:
         sens = await sensor.new_sensor(config[CONF_ACTTEMP])
         cg.add(var.set_acttemp_sensor(sens))
+    if CONF_HEATER_SWITCH in config:
+        heater_sw = await switch.new_switch(config[CONF_HEATER_SWITCH])
+        cg.add(heater_sw.set_parent(var))
 
