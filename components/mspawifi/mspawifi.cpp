@@ -1,10 +1,14 @@
 #include "mspawifi.h"
 #include "esphome/core/log.h"
+#include "esphome/core/hal.h"
 
 namespace esphome {
 namespace mspawifi {
 
 static const char *const TAG = "mspawifi";
+
+bool filterOverrun = false;
+
 
 bool MSPAWifi::processPoolMessage_( uint8_t *msg)
 {
@@ -47,6 +51,11 @@ void MSPAWifi::sendRemoteMessage_( uint8_t *msg)
   }
 }
 
+void disableFilterOverrun()
+{
+  filterOverrun = false;
+}
+
 bool MSPAWifi::processRemoteMessage_( uint8_t *msg)
 {
   //check checksum
@@ -61,6 +70,9 @@ bool MSPAWifi::processRemoteMessage_( uint8_t *msg)
     case 1: {
       if ( (msg[2] == 0x00) && this->heaterState_ ) { //here switch from homeassistant
         ESP_LOGV(TAG,"Heater ON by Wifi");
+        cancel_timeout("filteroverrun");
+        filterOverrun = true;
+        set_timeout("filteroverrun", 120000, disableFilterOverrun);
         msg[2]=1;
       }
       sendRemoteMessage_( msg );
@@ -68,10 +80,15 @@ bool MSPAWifi::processRemoteMessage_( uint8_t *msg)
 
     //Filter on/off from remote
     case 2: {
-      if ( (msg[2] == 0x00) && this->heaterState_) {
-        ESP_LOGV(TAG,"Filter ON ! Heater on by Wifi");
+      //keep filter 120 seconds on after heater is off
+      if ( (msg[2] == 0x00) && ( this->heaterState_ || filterOverrun ) ) {
+        if (filterOverrun) {
+          ESP_LOGV(TAG,"Filter ON ! Overrun -> Heater was on by Wifi");
+        } else {
+          ESP_LOGV(TAG,"Filter ON ! Heater on by Wifi");
+        }
         msg[2]=1;
-      }
+      } 
       sendRemoteMessage_( msg );
     } break;
 
