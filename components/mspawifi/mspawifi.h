@@ -33,6 +33,7 @@ class MSPAWifi : public Component {
   bool rem_rx_{false};
   bool pool_rx_{false};
   bool heaterState_{false};
+  bool filterOverrun_{false};
 };
 
 class MSPAWifiHeaterSwitch : public Component, public switch_::Switch {
