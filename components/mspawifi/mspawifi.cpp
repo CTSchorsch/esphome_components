@@ -19,19 +19,53 @@ bool MSPAWifi::processPoolMessage_( uint8_t *msg)
   }
   switch (msg[1]) {
     //actual temperature from pool
-    case 6: {
+    case 0x06: {
       float temp = msg[2] * 0.5;
       if (this->acttemp_sensor_ != nullptr) {
         if ( !this->acttemp_sensor_->has_state() || (this->acttemp_sensor_->state != temp ) )
           this->acttemp_sensor_->publish_state(temp);
       }
     } break;
-
-    case 8: {
-        ESP_LOGV(TAG, "Pool Status: %02x", msg[2]);
-    } break;
     
-   
+    //unkown
+    case 0x07: {
+          ESP_LOGV(TAG, "Pool->Remote: Message 0x07, value %02x", msg[2]);
+    } break;
+
+    //pool status Message
+    case 0x08: {
+      std::string status;
+      switch (msg[2]) {
+        case 0x00: {
+          status = "Pool idle";
+        } break;
+
+        case 0x03: {
+          status = "Filter on | Heater on";
+        } break;
+
+        default: {
+          status = "Status unknown";
+        }
+      }
+      // set status
+      if (this->status_text_ != nullptr) {
+        if ( !this->status_text_->has_state() || (this->status_text_->state != status) ) {
+          this->status_text_->publish_state(status);
+        }
+      }
+    } break;
+
+    //unknown
+    case 0x0a: {
+          ESP_LOGV(TAG, "Pool->Remote: Message 0x0a, value %02x", msg[2]);
+    } break;
+
+    //unknown, some kind of counter ?
+    case 0x0b: {
+          ESP_LOGV(TAG, "Pool->Remote: Message 0x0b, value %02x", msg[2]);
+    } break;
+
     default: {
       if (msg[2] != 0x00) {
           ESP_LOGV(TAG, "Pool->Remote: unknown message type %02x, value %02x", msg[1], msg[2]);
@@ -48,7 +82,6 @@ void MSPAWifi::sendRemoteMessage_( uint8_t *msg)
     this->pool_uart_->write_array(msg, 4);
   }
 }
-
 
 bool MSPAWifi::processRemoteMessage_( uint8_t *msg)
 {
