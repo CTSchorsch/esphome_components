@@ -108,14 +108,17 @@ bool MSPAWifi::processRemoteMessage_( uint8_t *msg)
     //Filter on/off from remote
     case 2: {
       //keep filter 120 seconds on after heater is off
-      if ( (msg[2] == 0x00) && ( this->heaterState_ || this->filterOverrun_ ) ) {
+      if ( (msg[2] == 0x00) && ( this->heaterState_ || this->filterOverrun_ || this->filterState_ ) ) {
         if (this->filterOverrun_) {
           ESP_LOGV(TAG,"Filter ON ! Overrun -> Heater was on by Wifi");
         } else {
-          ESP_LOGV(TAG,"Filter ON ! Heater on by Wifi");
+          ESP_LOGV(TAG,"Filter ON by Wifi or Heater!");
         }
         msg[2]=1;
       } 
+      //if filter enabled indirectly, set switch 
+      if (this->myFilterSw_->state != (bool)msg[2] )
+        this->myFilterSw_->publish_state((bool)msg[2]);
       sendRemoteMessage_( msg );
     } break;
 
@@ -201,6 +204,14 @@ void MSPAWifiHeaterSwitch::dump_config() {
 
 void MSPAWifiHeaterSwitch::write_state(bool state) {
   this->parent_->writeHeaterState(state);
+  this->publish_state(state);
+}
+
+void MSPAWifiFilterSwitch::dump_config() {
+  LOG_SWITCH("", "MSPAWifi Filter Switch", this);
+}
+
+void MSPAWifiFilterSwitch::write_state(bool state) {
   this->publish_state(state);
 }
 

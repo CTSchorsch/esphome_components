@@ -11,22 +11,26 @@ mspawifi_ns = cg.esphome_ns.namespace('mspawifi')
 
 MSPAWifi = mspawifi_ns.class_('MSPAWifi', cg.Component)
 MSPAWifiHeaterSwitch = mspawifi_ns.class_('MSPAWifiHeaterSwitch', switch.Switch, cg.Component)
+MSPAWifiFilterSwitch = mspawifi_ns.class_('MSPAWifiFilterSwitch', switch.Switch, cg.Component)
+
 
 CONF_REMOTE_UART = "remote_uart"
 CONF_POOL_UART = "pool_uart"
 CONF_ACTTEMP = "act_temp"
 CONF_HEATER_SWITCH = "heater_sw"
+CONF_FILTER_SWITCH = "filter_sw"
 CONF_STATUS_TEXT = "status_text"
 
 CONFIG_SCHEMA = cv.COMPONENT_SCHEMA.extend({
     cv.GenerateID(): cv.declare_id(MSPAWifi),
+    cv.Required(CONF_REMOTE_UART): cv.use_id(uart.UARTComponent),
+    cv.Required(CONF_POOL_UART): cv.use_id(uart.UARTComponent),
     cv.Optional(CONF_STATUS_TEXT): text_sensor.text_sensor_schema(text_sensor.TextSensor),
-    cv.Optional(CONF_REMOTE_UART): cv.use_id(uart.UARTComponent),
-    cv.Optional(CONF_POOL_UART): cv.use_id(uart.UARTComponent),
     cv.Optional(CONF_ACTTEMP): sensor.sensor_schema(
         accuracy_decimals = 1
     ),
     cv.Optional(CONF_HEATER_SWITCH): switch.SWITCH_SCHEMA.extend({cv.GenerateID(): cv.declare_id(MSPAWifiHeaterSwitch)}),
+    cv.Optional(CONF_FILTER_SWITCH): switch.SWITCH_SCHEMA.extend({cv.GenerateID(): cv.declare_id(MSPAWifiFilterSwitch)}),
 })
 
 
@@ -54,3 +58,7 @@ async def to_code(config):
         heater_sw = await switch.new_switch(config[CONF_HEATER_SWITCH])
         cg.add(heater_sw.set_parent(var))
 
+    if CONF_FILTER_SWITCH in config:
+        filter_sw = await switch.new_switch(config[CONF_FILTER_SWITCH])
+        #cg.add(filter_sw.set_parent(var))
+        cg.add(var.setFilterSw(filter_sw))

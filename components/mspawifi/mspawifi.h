@@ -9,6 +9,7 @@
 namespace esphome {
 namespace mspawifi {
 
+class MSPAWifiFilterSwitch;
 
 class MSPAWifi : public Component {
  
@@ -21,6 +22,8 @@ class MSPAWifi : public Component {
   void set_acttemp_sensor(sensor::Sensor *sensor) { acttemp_sensor_ = sensor; }
   void set_status_text(text_sensor::TextSensor *text_sensor) { status_text_ = text_sensor; }
   void writeHeaterState( bool state ); 
+  void writeFilterState( bool state ); 
+  void setFilterSw( MSPAWifiFilterSwitch *sw) { myFilterSw_ = sw; }
 
  protected:
   bool processPoolMessage_( uint8_t *msg);
@@ -30,6 +33,7 @@ class MSPAWifi : public Component {
   uart::UARTComponent *pool_uart_{nullptr};
   sensor::Sensor *acttemp_sensor_{nullptr};
   text_sensor::TextSensor *status_text_{nullptr};
+  MSPAWifiFilterSwitch *myFilterSw_{nullptr};
 
   std::vector<uint8_t> rem_buffer_;
   std::vector<uint8_t> pool_buffer_;
@@ -46,6 +50,13 @@ class MSPAWifiHeaterSwitch : public Component, public switch_::Switch {
  protected:
   void write_state(bool state) override;
   MSPAWifi *parent_;
+};
+
+class MSPAWifiFilterSwitch : public Component, public switch_::Switch {
+ public:
+  void dump_config() override;
+ protected:
+  void write_state(bool state) override;
 };
 
 
