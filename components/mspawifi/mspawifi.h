@@ -41,6 +41,7 @@ class MSPAWifi : public Component {
   bool pool_rx_{false};
   bool heaterState_{false};
   bool filterOverrun_{false};
+  uint8_t filterHours_{0};
 };
 
 class MSPAWifiHeaterSwitch : public Component, public switch_::Switch {

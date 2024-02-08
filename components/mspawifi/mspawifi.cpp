@@ -41,7 +41,7 @@ bool MSPAWifi::processPoolMessage_( uint8_t *msg)
         } break;
 
         case 0x03: {
-          status = "Filter on | Heater on";
+          status = str_snprintf("Filter on (%dh)", 20, this->filterHours_);
         } break;
 
         default: {
@@ -61,9 +61,9 @@ bool MSPAWifi::processPoolMessage_( uint8_t *msg)
           ESP_LOGV(TAG, "Pool->Remote: Message 0x0a, value %02x", msg[2]);
     } break;
 
-    //unknown, some kind of counter ?
+    //Filter usage hours
     case 0x0b: {
-          ESP_LOGV(TAG, "Pool->Remote: Message 0x0b, value %02x", msg[2]);
+          this->filterHours_=msg[2];
     } break;
 
     default: {
@@ -108,7 +108,7 @@ bool MSPAWifi::processRemoteMessage_( uint8_t *msg)
     //Filter on/off from remote
     case 2: {
       //keep filter 120 seconds on after heater is off
-      if ( (msg[2] == 0x00) && ( this->heaterState_ || this->filterOverrun_ || this->filterState_ ) ) {
+      if ( (msg[2] == 0x00) && ( this->heaterState_ || this->filterOverrun_ || this->myFilterSw_->state ) ) {
         if (this->filterOverrun_) {
           ESP_LOGV(TAG,"Filter ON ! Overrun -> Heater was on by Wifi");
         } else {

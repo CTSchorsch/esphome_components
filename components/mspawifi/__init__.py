@@ -60,5 +60,4 @@ async def to_code(config):
 
     if CONF_FILTER_SWITCH in config:
         filter_sw = await switch.new_switch(config[CONF_FILTER_SWITCH])
-        #cg.add(filter_sw.set_parent(var))
         cg.add(var.setFilterSw(filter_sw))
