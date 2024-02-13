@@ -20,6 +20,7 @@ class MSPAWifi : public Component {
   void set_remote_uart(uart::UARTComponent *uart) { this->remote_uart_ = uart; }
   void set_pool_uart(uart::UARTComponent *uart) { this->pool_uart_ = uart; }
   void set_acttemp_sensor(sensor::Sensor *sensor) { acttemp_sensor_ = sensor; }
+  void set_filterhours_sensor(sensor::Sensor *sensor) { filterhours_sensor_ = sensor; }
   void set_status_text(text_sensor::TextSensor *text_sensor) { status_text_ = text_sensor; }
   void writeHeaterState( bool state ); 
   void writeFilterState( bool state ); 
@@ -32,6 +33,7 @@ class MSPAWifi : public Component {
   uart::UARTComponent *remote_uart_{nullptr};
   uart::UARTComponent *pool_uart_{nullptr};
   sensor::Sensor *acttemp_sensor_{nullptr};
+  sensor::Sensor *filterhours_sensor_{nullptr};
   text_sensor::TextSensor *status_text_{nullptr};
   MSPAWifiFilterSwitch *myFilterSw_{nullptr};
 
@@ -41,7 +43,6 @@ class MSPAWifi : public Component {
   bool pool_rx_{false};
   bool heaterState_{false};
   bool filterOverrun_{false};
-  uint8_t filterHours_{0};
 };
 
 class MSPAWifiHeaterSwitch : public Component, public switch_::Switch {

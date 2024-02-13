@@ -17,6 +17,7 @@ MSPAWifiFilterSwitch = mspawifi_ns.class_('MSPAWifiFilterSwitch', switch.Switch,
 CONF_REMOTE_UART = "remote_uart"
 CONF_POOL_UART = "pool_uart"
 CONF_ACTTEMP = "act_temp"
+CONF_FILTERHOURS = "filter_hours"
 CONF_HEATER_SWITCH = "heater_sw"
 CONF_FILTER_SWITCH = "filter_sw"
 CONF_STATUS_TEXT = "status_text"
@@ -28,6 +29,9 @@ CONFIG_SCHEMA = cv.COMPONENT_SCHEMA.extend({
     cv.Optional(CONF_STATUS_TEXT): text_sensor.text_sensor_schema(text_sensor.TextSensor),
     cv.Optional(CONF_ACTTEMP): sensor.sensor_schema(
         accuracy_decimals = 1
+    ),
+    cv.Optional(CONF_FILTERHOURS): sensor.sensor_schema(
+        accuracy_decimals = 0
     ),
     cv.Optional(CONF_HEATER_SWITCH): switch.SWITCH_SCHEMA.extend({cv.GenerateID(): cv.declare_id(MSPAWifiHeaterSwitch)}),
     cv.Optional(CONF_FILTER_SWITCH): switch.SWITCH_SCHEMA.extend({cv.GenerateID(): cv.declare_id(MSPAWifiFilterSwitch)}),
@@ -53,6 +57,10 @@ async def to_code(config):
     if CONF_ACTTEMP in config:
         sens = await sensor.new_sensor(config[CONF_ACTTEMP])
         cg.add(var.set_acttemp_sensor(sens))
+
+    if CONF_FILTERHOURS in config:
+        filter_hours = await sensor.new_sensor(config[CONF_FILTERHOURS])
+        cg.add(var.set_filterhours_sensor(filter_hours))
     
     if CONF_HEATER_SWITCH in config:
         heater_sw = await switch.new_switch(config[CONF_HEATER_SWITCH])

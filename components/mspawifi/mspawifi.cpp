@@ -41,7 +41,7 @@ bool MSPAWifi::processPoolMessage_( uint8_t *msg)
         } break;
 
         case 0x03: {
-          status = str_snprintf("Filter on (%dh)", 20, this->filterHours_);
+          status = "Filter on";
         } break;
 
         default: {
@@ -63,7 +63,11 @@ bool MSPAWifi::processPoolMessage_( uint8_t *msg)
 
     //Filter usage hours
     case 0x0b: {
-          this->filterHours_=msg[2];
+      if (this->filterhours_sensor_ != nullptr) {
+        if ( !this->filterhours_sensor_->has_state() || (this->filterhours_sensor_->state != msg[2] ) )
+          this->filterhours_sensor_->publish_state(msg[2]);
+      }
+
     } break;
 
     default: {
@@ -116,9 +120,11 @@ bool MSPAWifi::processRemoteMessage_( uint8_t *msg)
         }
         msg[2]=1;
       } 
-      //if filter enabled indirectly, set switch 
-      if (this->myFilterSw_->state != (bool)msg[2] )
-        this->myFilterSw_->publish_state((bool)msg[2]);
+//      //if filter enabled by wifi 
+//      if (this->myFilterSw_->state != (bool)msg[2] )
+//        this->myFilterSw_->publish_state((bool)msg[2]);
+      
+      
       sendRemoteMessage_( msg );
     } break;
 
