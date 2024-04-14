@@ -113,7 +113,7 @@ bool MSPAWifi::processRemoteMessage_( uint8_t *msg)
 		ESP_LOGV(TAG,"Heaton = false");
 		heatOn= false;
 	}
-        msg[2]= (heatOn ? 1 : 0);
+        msg[2]=1; // (heatOn ? 1 : 0);
       }
       sendRemoteMessage_( msg );
     } break;
