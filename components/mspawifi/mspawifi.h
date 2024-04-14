@@ -43,6 +43,7 @@ class MSPAWifi : public Component {
   bool pool_rx_{false};
   bool heaterState_{false};
   bool filterOverrun_{false};
+  float sollTemp_{38.0};
 };
 
 class MSPAWifiHeaterSwitch : public Component, public switch_::Switch {

@@ -26,7 +26,6 @@ bool MSPAWifi::processPoolMessage_( uint8_t *msg)
           this->acttemp_sensor_->publish_state(temp);
       }
     } break;
-    
     //unkown
     case 0x07: {
           ESP_LOGV(TAG, "Pool->Remote: Message 0x07, value %02x", msg[2]);
@@ -92,6 +91,8 @@ bool MSPAWifi::processRemoteMessage_( uint8_t *msg)
   //check checksum
   uint8_t csum = (msg[0] + msg[1] + msg[2]) % 256;
   uint8_t tcsum = msg[3];
+  static bool heatOn = true;
+
   if (csum != tcsum) {
     ESP_LOGE(TAG, "Checksum mismatch: %02x != %02x", csum, tcsum);
     return false;
@@ -104,7 +105,15 @@ bool MSPAWifi::processRemoteMessage_( uint8_t *msg)
         cancel_timeout("filteroverrun");
         this->filterOverrun_ = true;
         set_timeout("filteroverrun", 120000, [this]() { this->filterOverrun_ = false;} );
-        msg[2]=1;
+	ESP_LOGV(TAG,"Akttemp: %f, Solltemp: %f",this->acttemp_sensor_->state, this->sollTemp_);
+	if ( (this->acttemp_sensor_->state < (this->sollTemp_-0.5)) && !heatOn ) {
+		ESP_LOGV(TAG,"Heaton = true");
+		heatOn = true;
+	} else if ( (this->acttemp_sensor_->state > (this->sollTemp_+0.5)) && heatOn ) {
+		ESP_LOGV(TAG,"Heaton = false");
+		heatOn= false;
+	}
+        msg[2]= (heatOn ? 1 : 0);
       }
       sendRemoteMessage_( msg );
     } break;
