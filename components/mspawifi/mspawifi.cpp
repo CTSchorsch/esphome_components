@@ -91,7 +91,7 @@ bool MSPAWifi::processRemoteMessage_( uint8_t *msg)
   //check checksum
   uint8_t csum = (msg[0] + msg[1] + msg[2]) % 256;
   uint8_t tcsum = msg[3];
-  //static bool heatOn = true;
+  static bool heatOn = true;
 
   if (csum != tcsum) {
     ESP_LOGE(TAG, "Checksum mismatch: %02x != %02x", csum, tcsum);
@@ -105,15 +105,16 @@ bool MSPAWifi::processRemoteMessage_( uint8_t *msg)
         cancel_timeout("filteroverrun");
         this->filterOverrun_ = true;
         set_timeout("filteroverrun", 120000, [this]() { this->filterOverrun_ = false;} );
-//	ESP_LOGV(TAG,"Akttemp: %f, Solltemp: %f",this->acttemp_sensor_->state, this->sollTemp_);
-//	if ( (this->acttemp_sensor_->state < (this->sollTemp_-0.5)) && !heatOn ) {
-//		ESP_LOGV(TAG,"Heaton = true");
-//		heatOn = true;
-//	} else if ( (this->acttemp_sensor_->state > (this->sollTemp_+0.5)) && heatOn ) {
-//		ESP_LOGV(TAG,"Heaton = false");
-//		heatOn= false;
-//	}
-        msg[2]=1; // (heatOn ? 1 : 0);
+	ESP_LOGV(TAG,"Akttemp: %f, Solltemp: %f",this->acttemp_sensor_->state, this->sollTemp_);
+	if ( (this->acttemp_sensor_->state < (this->sollTemp_-0.5)) && !heatOn ) {
+		ESP_LOGV(TAG,"heatOn = true");
+		heatOn = true;
+	} else if ( (this->acttemp_sensor_->state > (this->sollTemp_+0.5)) && heatOn ) {
+		ESP_LOGV(TAG,"heatOn = false");
+		heatOn= false;
+	}
+	ESP_LOGV(TAG,"Action: %d",(heatOn ? 1 : 0));
+        msg[2] = (heatOn ? 1 : 0);
       }
       sendRemoteMessage_( msg );
     } break;
@@ -128,12 +129,7 @@ bool MSPAWifi::processRemoteMessage_( uint8_t *msg)
           ESP_LOGV(TAG,"Filter ON by Wifi or Heater!");
         }
         msg[2]=1;
-      } 
-//      //if filter enabled by wifi 
-//      if (this->myFilterSw_->state != (bool)msg[2] )
-//        this->myFilterSw_->publish_state((bool)msg[2]);
-      
-      
+      }
       sendRemoteMessage_( msg );
     } break;
 
@@ -150,7 +146,7 @@ bool MSPAWifi::processRemoteMessage_( uint8_t *msg)
 }
 
 
-void MSPAWifi::loop() 
+void MSPAWifi::loop()
 {
   uint8_t c;
 
@@ -161,7 +157,7 @@ void MSPAWifi::loop()
       //first relay to remote
       if (this->remote_uart_ != nullptr)
         this->remote_uart_->write_byte(c);
-      
+
       //second process data
       if (!this->pool_rx_) {
         if (c != 0xa5)
