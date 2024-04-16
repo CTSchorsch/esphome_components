@@ -68,7 +68,6 @@ bool MSPAWifi::processPoolMessage_( uint8_t *msg)
       }
 
     } break;
-
     default: {
       if (msg[2] != 0x00) {
           ESP_LOGV(TAG, "Pool->Remote: unknown message type %02x, value %02x", msg[1], msg[2]);
@@ -105,7 +104,8 @@ bool MSPAWifi::processRemoteMessage_( uint8_t *msg)
         cancel_timeout("filteroverrun");
         this->filterOverrun_ = true;
         set_timeout("filteroverrun", 120000, [this]() { this->filterOverrun_ = false;} );
-	ESP_LOGV(TAG,"Akttemp: %f, Solltemp: %f",this->acttemp_sensor_->state, this->sollTemp_);
+	if (this->mySollTemp_ != nullptr && this->mySollTemp_->has_state())
+		ESP_LOGV(TAG,"Akttemp: %f, Solltemp: %f",this->acttemp_sensor_->state, mySollTemp_->state);
 	if ( (this->acttemp_sensor_->state < (this->sollTemp_-0.5)) && !heatOn ) {
 		ESP_LOGV(TAG,"heatOn = true");
 		heatOn = true;

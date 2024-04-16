@@ -5,11 +5,13 @@
 #include "esphome/components/uart/uart.h"
 #include "esphome/components/switch/switch.h"
 #include "esphome/components/text_sensor/text_sensor.h"
+#include "esphome/components/number/number.h"
 
 namespace esphome {
 namespace mspawifi {
 
 class MSPAWifiFilterSwitch;
+class MSPAWifiSollTempNumber;
 
 class MSPAWifi : public Component {
  
@@ -22,6 +24,7 @@ class MSPAWifi : public Component {
   void set_acttemp_sensor(sensor::Sensor *sensor) { acttemp_sensor_ = sensor; }
   void set_filterhours_sensor(sensor::Sensor *sensor) { filterhours_sensor_ = sensor; }
   void set_status_text(text_sensor::TextSensor *text_sensor) { status_text_ = text_sensor; }
+  void set_solltemp_number(MSPAWifiSollTempNumber *number) {mySollTemp_ = number; }
   void writeHeaterState( bool state ); 
   void writeFilterState( bool state ); 
   void setFilterSw( MSPAWifiFilterSwitch *sw) { myFilterSw_ = sw; }
@@ -36,6 +39,7 @@ class MSPAWifi : public Component {
   sensor::Sensor *filterhours_sensor_{nullptr};
   text_sensor::TextSensor *status_text_{nullptr};
   MSPAWifiFilterSwitch *myFilterSw_{nullptr};
+  MSPAWifiSollTempNumber *mySollTemp_{nullptr};
 
   std::vector<uint8_t> rem_buffer_;
   std::vector<uint8_t> pool_buffer_;
@@ -61,6 +65,14 @@ class MSPAWifiFilterSwitch : public Component, public switch_::Switch {
  protected:
   void write_state(bool state) override;
 };
+
+class MSPAWifiSollTempNumber : public number::Number, public Component {
+ public:
+ MSPAWifiSollTempNumber() { this->publish_state(38); }
+ protected:
+  void control(float value) override {this->publish_state(value); }
+};
+
 
 
 }  // namespace mspawifi
