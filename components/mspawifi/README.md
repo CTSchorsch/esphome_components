@@ -15,10 +15,13 @@ spawifi:
     name: Filterpumpe
   status_text:
     name: Status
+  sollemp:
+    name: Solltemperatur
 ```
 `status_text` is a `text_sensor` with the pool status
 `act_temp` is a `sensor`for the actual water temperatur
 `filter_sw` is a `switch` to enable the filterpump
 `heater_sw` is a `switch` to enable the heater and implicit the filterpump with 2 minuts overrun after haeter is switched off
+`solltemp` is a `number` input to set the target temperature
  
 
