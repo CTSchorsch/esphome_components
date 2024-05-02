@@ -105,11 +105,11 @@ bool MSPAWifi::processRemoteMessage_( uint8_t *msg)
         this->filterOverrun_ = true;
         set_timeout("filteroverrun", 120000, [this]() { this->filterOverrun_ = false;} );
 	if (this->mySollTemp_ != nullptr && this->mySollTemp_->has_state())
-		ESP_LOGV(TAG,"Akttemp: %f, Solltemp: %f",this->acttemp_sensor_->state, mySollTemp_->state);
-	if ( (this->acttemp_sensor_->state < (this->sollTemp_->state - 0.5)) && !heatOn ) {
+		ESP_LOGV(TAG,"Akttemp: %f, Solltemp: %f",this->acttemp_sensor_->state, this->mySollTemp_->state);
+	if ( (this->acttemp_sensor_->state < (this->mySollTemp_->state - 0.5)) && !heatOn ) {
 		ESP_LOGV(TAG,"heatOn = true");
 		heatOn = true;
-	} else if ( (this->acttemp_sensor_->state > (this->sollTemp_->state + 0.5)) && heatOn ) {
+	} else if ( (this->acttemp_sensor_->state > (this->mySollTemp_->state + 0.5)) && heatOn ) {
 		ESP_LOGV(TAG,"heatOn = false");
 		heatOn= false;
 	}
