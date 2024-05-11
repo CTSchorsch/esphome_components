@@ -73,7 +73,7 @@ bool MSPAWifi::processPoolMessage_( uint8_t *msg)
     //unknown
     case 0x18: {
       ESP_LOGV(TAG, "Pool->Remote: Message 0x18, value %02x", msg[2]);
-    }
+    } break;
 
     default: {
       if (msg[2] != 0x00) {
