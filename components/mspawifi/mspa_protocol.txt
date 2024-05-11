@@ -22,13 +22,14 @@ remote repeats sending commands
 
 0x01: 0x01 Heater on, 0x00 Heater off, no effect on led at remote, filter pump not automaticaly on
 0x02: 0x01 Filter on, 0x00 Filter off. no effect on led at remote
-
+0x12: 0x01 Bubbles on
 
 
 Unknown
 =======
 Pool->Remote
 0x0b: -> 0x17 or 0x18 ????
+0x18: -> 0x3c oder 0x3d ???
 
 Remote->Pool
 0x03:

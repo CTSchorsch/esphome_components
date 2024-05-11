@@ -26,6 +26,7 @@ bool MSPAWifi::processPoolMessage_( uint8_t *msg)
           this->acttemp_sensor_->publish_state(temp);
       }
     } break;
+
     //unkown
     case 0x07: {
           ESP_LOGV(TAG, "Pool->Remote: Message 0x07, value %02x", msg[2]);
@@ -68,9 +69,15 @@ bool MSPAWifi::processPoolMessage_( uint8_t *msg)
       }
 
     } break;
+
+    //unknown
+    case 0x18: {
+      ESP_LOGV(TAG, "Pool->Remote: Message 0x18, value %02x", msg[2]);
+    }
+
     default: {
       if (msg[2] != 0x00) {
-          ESP_LOGV(TAG, "Pool->Remote: unknown message type %02x, value %02x", msg[1], msg[2]);
+          ESP_LOGE(TAG, "Pool->Remote: unknown message type %02x, value %02x", msg[1], msg[2]);
       }
     } break;
   }
@@ -104,16 +111,13 @@ bool MSPAWifi::processRemoteMessage_( uint8_t *msg)
         cancel_timeout("filteroverrun");
         this->filterOverrun_ = true;
         set_timeout("filteroverrun", 120000, [this]() { this->filterOverrun_ = false;} );
-	if (this->mySollTemp_ != nullptr && this->mySollTemp_->has_state())
-		ESP_LOGV(TAG,"Akttemp: %f, Solltemp: %f",this->acttemp_sensor_->state, this->mySollTemp_->state);
 	if ( (this->acttemp_sensor_->state < (this->mySollTemp_->state - 0.5)) && !heatOn ) {
-		ESP_LOGV(TAG,"heatOn = true");
+		ESP_LOGI(TAG,"Switch Heater On");
 		heatOn = true;
 	} else if ( (this->acttemp_sensor_->state > (this->mySollTemp_->state + 0.5)) && heatOn ) {
-		ESP_LOGV(TAG,"heatOn = false");
+		ESP_LOGI(TAG,"Switch Heater Off");
 		heatOn= false;
 	}
-	ESP_LOGV(TAG,"Action: %d",(heatOn ? 1 : 0));
         msg[2] = (heatOn ? 1 : 0);
       }
       sendRemoteMessage_( msg );
@@ -136,7 +140,7 @@ bool MSPAWifi::processRemoteMessage_( uint8_t *msg)
 
     default: {
       if (msg[2] != 0x00) {
-        ESP_LOGV(TAG, "Remote->Pool: unknown message type %02x, value %02x", msg[1], msg[2]);
+        ESP_LOGE(TAG, "Remote->Pool: unknown message type %02x, value %02x", msg[1], msg[2]);
       }
       sendRemoteMessage_( msg );
     } break;
