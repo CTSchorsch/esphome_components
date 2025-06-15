@@ -17,6 +17,7 @@ bool MSPAWifi::processPoolMessage_( uint8_t *msg)
     ESP_LOGE(TAG, "Checksum mismatch: %02x != %02x", csum, tcsum);
     return false;
   }
+  ESP_LOGI(TAG, "Remote RX: type 0x%0x, value 0x%0x", msg[1], msg[2]);
   switch (msg[1]) {
     //actual temperature from pool
     case 0x06: {
@@ -92,6 +93,7 @@ void MSPAWifi::sendRemoteMessage_( uint8_t *msg)
   }
 }
 
+
 bool MSPAWifi::processRemoteMessage_( uint8_t *msg)
 {
   //check checksum
@@ -103,6 +105,7 @@ bool MSPAWifi::processRemoteMessage_( uint8_t *msg)
     ESP_LOGE(TAG, "Checksum mismatch: %02x != %02x", csum, tcsum);
     return false;
   }
+  ESP_LOGI(TAG, "Remote TX: type 0x%0x, value 0x%0x", msg[1], msg[2]);
   switch (msg[1]) {
     //Heater on/off from remote
     case 1: {
