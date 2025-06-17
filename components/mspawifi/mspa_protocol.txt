@@ -8,26 +8,40 @@ Byte 4  : Checksum ( sum(Byte 1-3) % 256 )
 Commands
 ========
 
-Pool->Remote
-------------
-
-0x06: Actual temperature, value in 0.5 degree steps, from 0
-0x08: Status: 0x00 Idle, 0x03 Filter, Heater no effect on value
-
-status has no effect on leds at remote
-
-
-Remote->Pool
-------------
+Remote->Pool (TX)
+-----------------
 remote repeats sending commands
 
 0x01: 0x01 Heater on, 0x00 Heater off, no effect on led at remote, filter pump not automaticaly on
 0x02: 0x01 Filter on, 0x00 Filter off. no effect on led at remote
 0x03: 0x0x Bubbles on x=1,2,3
--- 0x12: 0x01 ?
+0x0b: 
+0x0d: ??? vielleicht UV PRogramm ?
 0x0e: 0x01 Ozon Programm an, filter pump not automaticaly on
+0x15: 
+0x16: ??? Ventil zum aufpumpen auf ????
+0x18:
+
+
+Pool->Remote (RX)
+-----------------
+
+0x06: Actual temperature, value in 0.5 degree steps, from 0
+0x07:
+0x08: Status: 0x00 Idle, 0x03 Filter, Heater no effect on value
+0x0b: Filter usage hours
+0x0c:
+0x0e:
+0x12: kommt beim aufpusten mit 0x01
+0x15:
+0x16:
+
+
+Dumps
+=====
 
 Aufpusten
+---------
 [13:57:23][E][mspawifi:143]: Remote->Pool: unknown message type 03, value 03
 [13:57:24][E][mspawifi:143]: Remote->Pool: unknown message type 16, value 01
 [13:57:24][E][mspawifi:143]: Remote->Pool: unknown message type 03, value 03
@@ -40,19 +54,4 @@ Aufpusten
 [13:58:00][E][mspawifi:080]: Pool->Remote: unknown message type 12, value 01
 
 
-Unknown
-=======
-Pool->Remote
-0x0b: -> 0x17 or 0x18 ????
-0x18: -> 0x3c oder 0x3d ???
-0x12: ?
 
-Remote->Pool
-0x03:
-0x0b:  -> 0x00 to pool, after 0x0b von remote, handshake ??
-0x0c:
-0x0d:
-0x0e:
-0x15:
-0x07 -> 0x0c ??
-0x16:
