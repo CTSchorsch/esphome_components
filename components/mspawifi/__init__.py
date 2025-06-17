@@ -35,9 +35,9 @@ CONFIG_SCHEMA = cv.COMPONENT_SCHEMA.extend({
     cv.Optional(CONF_FILTERHOURS): sensor.sensor_schema(
         accuracy_decimals = 0
     ),
-    cv.Optional(CONF_HEATER_SWITCH): switch.SWITCH_SCHEMA.extend({cv.GenerateID(): cv.declare_id(MSPAWifiHeaterSwitch)}),
-    cv.Optional(CONF_FILTER_SWITCH): switch.SWITCH_SCHEMA.extend({cv.GenerateID(): cv.declare_id(MSPAWifiFilterSwitch)}),
-    cv.Optional(CONF_SOLLTEMP_NUMBER): number.NUMBER_SCHEMA.extend({cv.GenerateID(): cv.declare_id(MSPAWifiSollTempNumber)}),
+    cv.Optional(CONF_HEATER_SWITCH): switch.switch_schema.extend({cv.GenerateID(): cv.declare_id(MSPAWifiHeaterSwitch)}),
+    cv.Optional(CONF_FILTER_SWITCH): switch.switch_schema.extend({cv.GenerateID(): cv.declare_id(MSPAWifiFilterSwitch)}),
+    cv.Optional(CONF_SOLLTEMP_NUMBER): number.switch_schema.extend({cv.GenerateID(): cv.declare_id(MSPAWifiSollTempNumber)}),
 })
 
 
