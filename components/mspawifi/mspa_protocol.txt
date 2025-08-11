@@ -15,7 +15,9 @@ remote repeats sending commands
 0x01: 0x01 Heater on, 0x00 Heater off, no effect on led at remote, filter pump not automaticaly on
 0x02: 0x01 Filter on, 0x00 Filter off. no effect on led at remote
 0x03: 0x0x Bubbles on x=1,2,3
-0x0b: 
+0x06: Im abgebauten Zustand 0x34, 
+0x08: Ansaugmagnet angezogen 0x01, Auslasmagnet hoch 0x02
+0x0b: Im abgebauten zustand mal ne 0x27
 0x0d: ??? vielleicht UV PRogramm ?
 0x0e: 0x01 Ozon Programm an, filter pump not automaticaly on
 0x15: 
@@ -27,8 +29,9 @@ Pool->Remote (RX)
 -----------------
 
 0x06: Actual temperature, value in 0.5 degree steps, from 0
-0x07:
+0x07: Beim Start 0x0c  ????
 0x08: Status: 0x00 Idle, 0x03 Filter, Heater no effect on value
+0x0a: Beim Start 0x01 ????
 0x0b: Filter usage hours
 0x0c:
 0x0e:

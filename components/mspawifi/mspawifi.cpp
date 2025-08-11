@@ -47,6 +47,7 @@ bool MSPAWifi::processPoolMessage_( uint8_t *msg)
 
         default: {
           status = "Status unknown";
+          ESP_LOGV(TAG, "Pool->Remote: Status unknown, value %02x", msg[2]);
         }
       }
       // set status
