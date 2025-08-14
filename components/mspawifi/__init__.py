@@ -24,8 +24,8 @@ CONF_FILTER_SWITCH = "filter_sw"
 CONF_STATUS_TEXT = "status_text"
 CONF_SOLLTEMP_NUMBER = "solltemp"
 
-CONFIG_SCHEMA = cv.COMPONENT_SCHEMA.extend({
-    cv.GenerateID(): cv.declare_id(MSPAWifi),
+CONFIG_SCHEMA = cv.component_schema(MSPAWifi).extend({
+#    cv.GenerateID(): cv.declare_id(MSPAWifi),
     cv.Required(CONF_REMOTE_UART): cv.use_id(uart.UARTComponent),
     cv.Required(CONF_POOL_UART): cv.use_id(uart.UARTComponent),
     cv.Optional(CONF_STATUS_TEXT): text_sensor.text_sensor_schema(text_sensor.TextSensor),
@@ -35,9 +35,12 @@ CONFIG_SCHEMA = cv.COMPONENT_SCHEMA.extend({
     cv.Optional(CONF_FILTERHOURS): sensor.sensor_schema(
         accuracy_decimals = 0
     ),
-    cv.Optional(CONF_HEATER_SWITCH): switch.SWITCH_SCHEMA.extend({cv.GenerateID(): cv.declare_id(MSPAWifiHeaterSwitch)}),
-    cv.Optional(CONF_FILTER_SWITCH): switch.SWITCH_SCHEMA.extend({cv.GenerateID(): cv.declare_id(MSPAWifiFilterSwitch)}),
-    cv.Optional(CONF_SOLLTEMP_NUMBER): number.NUMBER_SCHEMA.extend({cv.GenerateID(): cv.declare_id(MSPAWifiSollTempNumber)}),
+#    cv.Optional(CONF_HEATER_SWITCH): switch.SWITCH_SCHEMA.extend({cv.GenerateID(): cv.declare_id(MSPAWifiHeaterSwitch)}),
+    cv.Optional(CONF_HEATER_SWITCH): switch.switch_schema(MSPAWifiHeaterSwitch).extend({}),
+#    cv.Optional(CONF_FILTER_SWITCH): switch.SWITCH_SCHEMA.extend({cv.GenerateID(): cv.declare_id(MSPAWifiFilterSwitch)}),
+    cv.Optional(CONF_FILTER_SWITCH): switch.switch_schema(MSPAWifiFilterSwitch).extend({}),
+#    cv.Optional(CONF_SOLLTEMP_NUMBER): number.NUMBER_SCHEMA.extend({cv.GenerateID(): cv.declare_id(MSPAWifiSollTempNumber)}),
+    cv.Optional(CONF_SOLLTEMP_NUMBER): switch.number_schema(MSPAWifiSollTempNumber).extend({}),
 })
 
 

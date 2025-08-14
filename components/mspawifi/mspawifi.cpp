@@ -112,18 +112,22 @@ bool MSPAWifi::processRemoteMessage_( uint8_t *msg)
     case 1: {
       if ( (msg[2] == 0x00) && this->heaterState_ ) { //here switch from homeassistant
         ESP_LOGV(TAG,"Heater ON by Wifi");
-        cancel_timeout("filteroverrun");
-        this->filterOverrun_ = true;
-        set_timeout("filteroverrun", 120000, [this]() { this->filterOverrun_ = false;} );
-	if ( (this->acttemp_sensor_->state < (this->mySollTemp_->state - 0.5)) && !heatOn ) {
+	if ( (this->acttemp_sensor_->state < (this->mySollTemp_->state)) && !heatOn ) {
 		ESP_LOGI(TAG,"Switch Heater On");
 		heatOn = true;
-	} else if ( (this->acttemp_sensor_->state > (this->mySollTemp_->state + 0.5)) && heatOn ) {
+	} else if ( (this->acttemp_sensor_->state > (this->mySollTemp_->state)) && heatOn ) {
 		ESP_LOGI(TAG,"Switch Heater Off");
 		heatOn= false;
 	}
         msg[2] = (heatOn ? 1 : 0);
       }
+      if ( heatOn ) {
+	//If heater was on, let the pump running for three minutes
+        cancel_timeout("filteroverrun");
+        this->filterOverrun_ = true;
+        set_timeout("filteroverrun", 120000, [this]() { this->filterOverrun_ = false;} );
+      }
+
       sendRemoteMessage_( msg );
     } break;
 

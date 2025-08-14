@@ -15,7 +15,7 @@ remote repeats sending commands
 0x01: 0x01 Heater on, 0x00 Heater off, no effect on led at remote, filter pump not automaticaly on
 0x02: 0x01 Filter on, 0x00 Filter off. no effect on led at remote
 0x03: 0x0x Bubbles on x=1,2,3
-0x06: Im abgebauten Zustand 0x34, 
+0x06: 
 0x08: Ansaugmagnet angezogen 0x01, Auslasmagnet hoch 0x02
 0x0b: Im abgebauten zustand mal ne 0x27
 0x0d: ??? vielleicht UV PRogramm ?
