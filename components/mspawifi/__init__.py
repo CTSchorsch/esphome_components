@@ -40,7 +40,7 @@ CONFIG_SCHEMA = cv.COMPONENT_SCHEMA.extend({
 #    cv.Optional(CONF_FILTER_SWITCH): switch.SWITCH_SCHEMA.extend({cv.GenerateID(): cv.declare_id(MSPAWifiFilterSwitch)}),
     cv.Optional(CONF_FILTER_SWITCH): switch.switch_schema(MSPAWifiFilterSwitch).extend({}),
 #    cv.Optional(CONF_SOLLTEMP_NUMBER): number.NUMBER_SCHEMA.extend({cv.GenerateID(): cv.declare_id(MSPAWifiSollTempNumber)}),
-    cv.Optional(CONF_SOLLTEMP_NUMBER): switch.number_schema(MSPAWifiSollTempNumber).extend({}),
+    cv.Optional(CONF_SOLLTEMP_NUMBER): number.number_schema(MSPAWifiSollTempNumber).extend({}),
 })
 
 
