@@ -17,7 +17,7 @@ remote repeats sending commands
 0x03: 0x0x Bubbles on x=1,2,3
 0x06: 
 0x08: Ansaugmagnet angezogen 0x01, Auslasmagnet hoch 0x02
-0x0b: Im abgebauten zustand mal ne 0x27
+0x0b:
 0x0d: ??? vielleicht UV PRogramm ?
 0x0e: 0x01 Ozon Programm an, filter pump not automaticaly on
 0x15: 

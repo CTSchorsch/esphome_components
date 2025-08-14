@@ -77,5 +77,5 @@ async def to_code(config):
         cg.add(var.setFilterSw(filter_sw))
 
     if CONF_SOLLTEMP_NUMBER in config:
-        solltemp_number = await number.new_number(config[CONF_SOLLTEMP_NUMBER],min_value=20,max_value=40,step=0.5)
+        solltemp_number = await number.new_number(config[CONF_SOLLTEMP_NUMBER],min_value=30,max_value=40,step=0.5)
         cg.add(var.set_solltemp_number(solltemp_number))
