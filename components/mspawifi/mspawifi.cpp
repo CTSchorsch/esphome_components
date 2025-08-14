@@ -100,7 +100,7 @@ bool MSPAWifi::processRemoteMessage_( uint8_t *msg)
   //check checksum
   uint8_t csum = (msg[0] + msg[1] + msg[2]) % 256;
   uint8_t tcsum = msg[3];
-  static bool heatOn = true;
+  static bool heatOn = false;
 
   if (csum != tcsum) {
     ESP_LOGE(TAG, "Checksum mismatch: %02x != %02x", csum, tcsum);
@@ -120,14 +120,14 @@ bool MSPAWifi::processRemoteMessage_( uint8_t *msg)
 		heatOn= false;
 	}
         msg[2] = (heatOn ? 1 : 0);
-      }
-      if ( heatOn ) {
-	//If heater was on, let the pump running for three minutes
-        cancel_timeout("filteroverrun");
-        this->filterOverrun_ = true;
-        set_timeout("filteroverrun", 120000, [this]() { this->filterOverrun_ = false;} );
-      }
 
+        if ( heatOn ) {
+    	  //If heater was on, let the pump running for three minutes
+          cancel_timeout("filteroverrun");
+          this->filterOverrun_ = true;
+          set_timeout("filteroverrun", 120000, [this]() { this->filterOverrun_ = false;} );
+        }
+      }
       sendRemoteMessage_( msg );
     } break;
 
